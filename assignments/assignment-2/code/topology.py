@@ -79,7 +79,29 @@ def simpleTest():
     net.stop()
 
 
+def basicTopoTest():
+    "Create and test a custom network"
+    topo = MyTopo()
+    net = Mininet(topo)
+    net.start()
+    print("Dumping host connections")
+    dumpNodeConnections(net.hosts)
+    net.stop()
+
+
+def pingAllTest():
+    "Create and test connectivity of a custom network"
+    topo = MyTopo()
+    net = Mininet(topo)
+    net.start()
+    print("Testing network connectivity")
+    net.pingAll()
+    net.stop()
+
+
 if __name__ == '__main__':
     # Tell mininet to print useful information
     setLogLevel('info')
-    simpleTest()
+    #simpleTest()
+    basicTopoTest()
+    #pingAllTest()
