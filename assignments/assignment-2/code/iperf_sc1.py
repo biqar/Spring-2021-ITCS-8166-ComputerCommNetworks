@@ -2,6 +2,7 @@
 
 from mininet.topo import Topo
 from mininet.net import Mininet
+from mininet.link import TCLink
 from mininet.util import dumpNodeConnections
 from mininet.log import setLogLevel
 
@@ -59,7 +60,7 @@ class MyTopo(Topo):
 def perfTest():
     "Create network and run simple performance test"
     topo = MyTopo()
-    net = Mininet(topo)
+    net = Mininet(topo, link=TCLink)
     net.start()
     print("Dumping host connections")
     dumpNodeConnections(net.hosts)
