@@ -1,0 +1,61 @@
+mininet@mininetvm:~/Spring-2021-ITCS-8166-ComputerCommNetworks/assignments/assignment-2/code$ sudo python iperf_sc1.py 
+*** Creating network
+*** Adding controller
+*** Adding hosts:
+h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 
+*** Adding switches:
+s9 s10 s11 s12 s13 s14 s15 
+*** Adding links:
+(s9, h9) (s9, h10) (10.00Mbit) (10.00Mbit) (s9, s10) (s9, s13) (s10, s11) (15.00Mbit 10ms delay) (15.00Mbit 10ms delay) (s10, s12) (s11, h1) (s11, h2) (s12, h3) (s12, h4) (s13, s14) (s13, s15) (s14, h5) (s14, h6) (s15, h7) (s15, h8) 
+*** Configuring hosts
+h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 
+*** Starting controller
+c0 
+*** Starting 7 switches
+s9 s10 s11 s12 s13 s14 s15 ...(10.00Mbit) (15.00Mbit 10ms delay) (10.00Mbit) (15.00Mbit 10ms delay) 
+Dumping host connections
+h1 h1-eth0:s11-eth1
+h2 h2-eth0:s11-eth2
+h3 h3-eth0:s12-eth1
+h4 h4-eth0:s12-eth2
+h5 h5-eth0:s14-eth1
+h6 h6-eth0:s14-eth2
+h7 h7-eth0:s15-eth1
+h8 h8-eth0:s15-eth2
+h9 h9-eth0:s9-eth1
+h10 h10-eth0:s9-eth2
+Testing network connectivity
+*** Ping: testing ping reachability
+h1 -> h2 h3 h4 X X X X h9 X 
+h2 -> h1 h3 h4 X X X X h9 X 
+h3 -> h1 h2 h4 X X X X h9 X 
+h4 -> h1 h2 h3 X X X X h9 X 
+h5 -> X X X X h6 h7 h8 X h10 
+h6 -> X X X X h5 h7 h8 X h10 
+h7 -> X X X X h5 h6 h8 X h10 
+h8 -> X X X X h5 h6 h7 X h10 
+h9 -> h1 h2 h3 h4 X X X X X 
+h10 -> X X X X h5 h6 h7 h8 X 
+*** Results: 55% dropped (40/90 received)
+Testing bandwidth between h1 and h9
+*** Iperf: testing TCP bandwidth between h1 and h9 
+*** Results: ['9.24 Mbits/sec', '11.3 Mbits/sec']
+Testing bandwidth between h2 and h9
+*** Iperf: testing TCP bandwidth between h2 and h9 
+.*** Results: ['7.51 Mbits/sec', '9.81 Mbits/sec']
+Testing bandwidth between h3 and h9
+*** Iperf: testing TCP bandwidth between h3 and h9 
+*** Results: ['9.17 Mbits/sec', '11.6 Mbits/sec']
+Testing bandwidth between h4 and h9
+*** Iperf: testing TCP bandwidth between h4 and h9 
+*** Results: ['9.37 Mbits/sec', '11.8 Mbits/sec']
+*** Stopping 1 controllers
+c0 
+*** Stopping 16 links
+................
+*** Stopping 7 switches
+s9 s10 s11 s12 s13 s14 s15 
+*** Stopping 10 hosts
+h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 
+*** Done
+
