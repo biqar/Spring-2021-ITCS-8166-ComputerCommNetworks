@@ -105,9 +105,9 @@ def perfTest():
     # h8, h9 = net.get('h8', 'h9')
     # net.iperf((h8, h9))
 
-    print("Testing bandwidth between h9 and h9")
-    h9, h9 = net.get('h9', 'h9')
-    net.iperf((h9, h9))
+    # print("Testing bandwidth between h9 and h9")
+    # h9, h9 = net.get('h9', 'h9')
+    # net.iperf((h9, h9))
 
     # print("Testing bandwidth between h10 and h9")
     # h10, h9 = net.get('h10', 'h9')
