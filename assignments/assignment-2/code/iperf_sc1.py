@@ -68,10 +68,10 @@ def perfTest():
     print("Testing network connectivity")
     net.pingAll()
 
-    for h in net.hosts:
-        print("Testing bandwidth between {} and h9".format(h))
-        h_, h9 = net.get(h, 'h9')
-        net.iperf((h_, h9))
+    # for h in net.hosts:
+    #     print("Testing bandwidth between {} and h9".format(h))
+    #     h_, h9 = net.get(h, 'h9')
+    #     net.iperf((h_, h9))
 
     print("Testing bandwidth between h1 and h9")
     h1, h9 = net.get('h1', 'h9')
