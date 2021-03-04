@@ -56,29 +56,6 @@ class MyTopo(Topo):
         self.addLink('s9', 's13')
 
 
-class MultiSwitchTopo(Topo):
-    "Single switch connected to n hosts."
-
-    def build(self, n=2):
-        switch = self.addSwitch('s1')
-        # Python's range(N) generates 0..N-1
-        for h in range(n):
-            host = self.addHost('h%s' % (h + 1))
-            self.addLink(host, switch)
-
-
-def simpleTest():
-    "Create and test a simple network"
-    topo = MultiSwitchTopo(n=4)
-    net = Mininet(topo)
-    net.start()
-    print("Dumping host connections")
-    dumpNodeConnections(net.hosts)
-    print("Testing network connectivity")
-    net.pingAll()
-    net.stop()
-
-
 def basicTopoTest():
     "Create and test a custom network"
     topo = MyTopo()
@@ -102,6 +79,5 @@ def pingAllTest():
 if __name__ == '__main__':
     # Tell mininet to print useful information
     setLogLevel('info')
-    #simpleTest()
     basicTopoTest()
-    #pingAllTest()
+    pingAllTest()
