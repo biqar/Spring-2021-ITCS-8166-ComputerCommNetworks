@@ -89,29 +89,29 @@ def perfTest():
     h4, h9 = net.get('h4', 'h9')
     net.iperf((h4, h9))
 
-    print("Testing bandwidth between h5 and h9")
-    h5, h9 = net.get('h5', 'h9')
-    net.iperf((h5, h9))
-
-    print("Testing bandwidth between h6 and h9")
-    h6, h9 = net.get('h6', 'h9')
-    net.iperf((h6, h9))
-
-    print("Testing bandwidth between h7 and h9")
-    h7, h9 = net.get('h7', 'h9')
-    net.iperf((h7, h9))
-
-    print("Testing bandwidth between h8 and h9")
-    h8, h9 = net.get('h8', 'h9')
-    net.iperf((h8, h9))
+    # print("Testing bandwidth between h5 and h9")
+    # h5, h9 = net.get('h5', 'h9')
+    # net.iperf((h5, h9))
+    #
+    # print("Testing bandwidth between h6 and h9")
+    # h6, h9 = net.get('h6', 'h9')
+    # net.iperf((h6, h9))
+    #
+    # print("Testing bandwidth between h7 and h9")
+    # h7, h9 = net.get('h7', 'h9')
+    # net.iperf((h7, h9))
+    #
+    # print("Testing bandwidth between h8 and h9")
+    # h8, h9 = net.get('h8', 'h9')
+    # net.iperf((h8, h9))
 
     print("Testing bandwidth between h9 and h9")
     h9, h9 = net.get('h9', 'h9')
     net.iperf((h9, h9))
 
-    print("Testing bandwidth between h10 and h9")
-    h10, h9 = net.get('h10', 'h9')
-    net.iperf((h10, h9))
+    # print("Testing bandwidth between h10 and h9")
+    # h10, h9 = net.get('h10', 'h9')
+    # net.iperf((h10, h9))
 
     net.stop()
 
