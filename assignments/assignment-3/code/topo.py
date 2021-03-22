@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from mininet.topo import Topo
-from mininet.node import Controller
+from mininet.node import RemoteController
 from mininet.net import Mininet
 from mininet.link import TCLink
 from mininet.cli import CLI
