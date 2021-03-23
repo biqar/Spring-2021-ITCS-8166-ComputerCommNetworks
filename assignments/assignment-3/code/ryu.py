@@ -169,10 +169,11 @@ class SimpleSwitch13(app_manager.RyuApp):
             s = s_host.port.dpid
             hs = 'h' + str(s)
             hs_ip = '10.0.0.' + str(s)
-            s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf', '-s &> server.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-            server_log = str(s_result.communicate(input="mininet"))
+            # s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf', '-s &> server.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf', '-s'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            # server_log = str(s_result.communicate(input="mininet"))
             #s_result.rstrip()
-            print("iperf server log: {}".format(server_log))
+            #print("iperf server log: {}".format(server_log))
             for c_host in self.topo_raw_hosts:
                 c = c_host.port.dpid
                 # condition to check whether client and server are the same host
@@ -180,11 +181,15 @@ class SimpleSwitch13(app_manager.RyuApp):
                     continue
                 hc = 'h' + str(c)
                 print("iperf --server on {} with ip {} and iperf --client in {}".format(hs, hs_ip, hc))
-                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf -t 5 -c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                # c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip], stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate()
                 client_log = str(c_result.communicate(input="mininet"))
+                # client_log = str(c_result)
                 # c_result.rstrip()
                 print("iperf client log: {}".format(client_log))
                 self.bandwidth[(hc, hs)] = 9.0
+                break
+            break
 
 
     """
