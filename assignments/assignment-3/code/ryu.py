@@ -178,15 +178,13 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # condition to check whether client and server are the same host
                 if c == s:
                     continue
-		hc = 'h' + str(c)
+                hc = 'h' + str(c)
                 print("iperf --server on {} with ip {} and iperf --client in {}".format(hs, hs_ip, hc))
                 c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf -t 5 -c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-		client_log = str(c_result.communicate(input="mininet"))
+                client_log = str(c_result.communicate(input="mininet"))
                 # c_result.rstrip()
                 print("iperf client log: {}".format(client_log))
                 self.bandwidth[(hc, hs)] = 9.0
-		break
-	    break
 
 
     """
