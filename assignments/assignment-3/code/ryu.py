@@ -159,7 +159,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.count = self.count + 1
         if self.count == self.MAX_COUNT:
             x = []
-            print_topo(self)
+            self.print_topo()
             for h in self.topo_raw_hosts:
                 for ip in h.ipv4:
                     host = 'h' + ip.split('.')[3]
