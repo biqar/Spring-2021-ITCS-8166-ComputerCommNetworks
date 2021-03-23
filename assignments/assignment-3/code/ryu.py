@@ -150,7 +150,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         self.topo_raw_hosts = copy.copy(get_host(self, None))
         self.count = self.count + 1
-        if self.count%self.MAX_COUNT == 0:
+        if self.count == self.MAX_COUNT:
             # x = []
             self.print_topo()
             # for h in self.topo_raw_hosts:
@@ -169,20 +169,24 @@ class SimpleSwitch13(app_manager.RyuApp):
             s = s_host.port.dpid
             hs = 'h' + str(s)
             hs_ip = '10.0.0.' + str(s)
-            s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf -s'], stdout=subprocess.PIPE).communicate()[0]
-            s_result.rstrip()
-            print(s_result)
+            s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf', '-s &> server.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            server_log = str(s_result.communicate(input="mininet"))
+            #s_result.rstrip()
+            print("iperf server log: {}".format(server_log))
             for c_host in self.topo_raw_hosts:
                 c = c_host.port.dpid
                 # condition to check whether client and server are the same host
                 if c == s:
                     continue
+		hc = 'h' + str(c)
                 print("iperf --server on {} with ip {} and iperf --client in {}".format(hs, hs_ip, hc))
-                hc = 'h' + str(c)
-                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf -t 10 -c', hs_ip], stdout=subprocess.PIPE).communicate()[0]
-                c_result.rstrip()
-                print(c_result)
+                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf -t 5 -c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+		client_log = str(c_result.communicate(input="mininet"))
+                # c_result.rstrip()
+                print("iperf client log: {}".format(client_log))
                 self.bandwidth[(hc, hs)] = 9.0
+		break
+	    break
 
 
     """
