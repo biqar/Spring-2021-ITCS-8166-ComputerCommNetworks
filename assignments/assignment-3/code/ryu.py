@@ -164,11 +164,13 @@ class SimpleSwitch13(app_manager.RyuApp):
     Measure the bandwidth between hosts by using iperf
     """
     def measure_bandwidth(self):
-        for link in self.topo_raw_links:
-            s, c, _ = link
+        for s_host in self.topo_raw_hosts:
+            s = s_host.port.dpid
             hs = 'h' + str(s)
-            hc = '10.0.0.' + str(c)
-            print("iperf --server on {} and iperf --client in {}".format(hs, hc))
+            for c_host in self.topo_raw_hosts:
+                c = c_host.port.dpid
+                hc = '10.0.0.' + str(c)
+                print("iperf --server on {} and iperf --client in {}".format(hs, hc))
         #process1 = subprocess.Popen(["iperf", "-c", 10.10.0.1], stdout=subprocess.PIPE)
 
 
@@ -194,8 +196,8 @@ class SimpleSwitch13(app_manager.RyuApp):
     """
     def print_topo(self):
         print(" \t" + "Current Hosts:")
-        for s in self.topo_raw_hosts:
-            print(" \t\t" + str(s))
+        for h in self.topo_raw_hosts:
+            print(" \t\t" + str(h))
 
         print(" \t" + "Current Switches:")
         for s in self.topo_raw_switches:
