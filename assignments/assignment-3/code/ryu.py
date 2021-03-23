@@ -160,6 +160,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             # print(x)
             print("***Measuring Bandwidth***")
             self.measure_bandwidth()
+            print("Link Costs: {}".format(self.bandwidth))
 
     """
     Measure the bandwidth between hosts by using iperf
