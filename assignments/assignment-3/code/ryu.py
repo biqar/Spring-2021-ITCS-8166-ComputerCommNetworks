@@ -24,7 +24,7 @@ from ryu.lib.packet import ether_types
 
 from ryu.topology import event
 # Below is the library used for topo discovery
-from ryu.topology.api import get_switch, get_link
+from ryu.topology.api import get_switch, get_link, get_host
 import copy
 
 class SimpleSwitch13(app_manager.RyuApp):
