@@ -157,7 +157,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         self.topo_raw_hosts = copy.copy(get_host(self, None))
         self.count = self.count + 1
-        if self.count == self.MAX_COUNT:
+        if self.count%self.MAX_COUNT == 0:
             x = []
             self.print_topo()
             for h in self.topo_raw_hosts:
