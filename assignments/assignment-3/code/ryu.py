@@ -21,11 +21,12 @@ from ryu.ofproto import ofproto_v1_3
 from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
-
 from ryu.topology import event
 # Below is the library used for topo discovery
 from ryu.topology.api import get_switch, get_link, get_host
+
 import copy
+import subprocess
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -167,11 +168,21 @@ class SimpleSwitch13(app_manager.RyuApp):
         for s_host in self.topo_raw_hosts:
             s = s_host.port.dpid
             hs = 'h' + str(s)
+            hs_ip = '10.0.0.' + str(s)
+            s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf -s'], stdout=subprocess.PIPE).communicate()[0]
+            s_result.rstrip()
+            print(s_result)
             for c_host in self.topo_raw_hosts:
                 c = c_host.port.dpid
-                hc = '10.0.0.' + str(c)
-                print("iperf --server on {} and iperf --client in {}".format(hs, hc))
-        #process1 = subprocess.Popen(["iperf", "-c", 10.10.0.1], stdout=subprocess.PIPE)
+                # condition to check whether client and server are the same host
+                if c == s:
+                    continue
+                print("iperf --server on {} with ip {} and iperf --client in {}".format(hs, hs_ip, hc))
+                hc = 'h' + str(c)
+                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf -t 10 -c', hs_ip], stdout=subprocess.PIPE).communicate()[0]
+                c_result.rstrip()
+                print(c_result)
+                self.bandwidth[(hc, hs)] = 9.0
 
 
     """
