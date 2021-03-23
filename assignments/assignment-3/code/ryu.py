@@ -34,9 +34,14 @@ class SimpleSwitch13(app_manager.RyuApp):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
         # USed for learning switch functioning
         self.mac_to_port = {}
+        self.delay = {}
         # Holds the topology data and structure
         self.topo_raw_switches = []
         self.topo_raw_links = []
+        self.topo_raw_hosts = []
+        # Count to print topology data after convergence
+        self.MAX_COUNT = 300
+        self.count = 0
 
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -150,35 +155,53 @@ class SimpleSwitch13(app_manager.RyuApp):
                                   in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
 
+        self.topo_raw_hosts = copy.copy(get_host(self, None))
+        self.count = self.count + 1
+        if self.count == self.MAX_COUNT:
+            x = []
+            print_topo(self)
+            for h in self.topo_raw_hosts:
+                for ip in h.ipv4:
+                    host = 'h' + ip.split('.')[3]
+                    x.append(host)
+            print(x)
+            print("***Delay Test***")
+            # todo: call delay_test
+
+
     ###################################################################################
     """
-    The event EventSwitchEnter will trigger the activation of get_topology_data().
+    The event EventLinkAdd will trigger the activation of handler_link_add().
+    """
+    @set_ev_cls(event.EventLinkAdd)
+    def handler_link_add(self, ev):
+        # The Function get_link(self, None) outputs the list of links.
+        self.topo_raw_links = copy.copy(get_link(self, None))
+
+
+    """
+    The event EventSwitchEnter will trigger the activation of handler_switch_enter().
     """
     @set_ev_cls(event.EventSwitchEnter)
     def handler_switch_enter(self, ev):
         # The Function get_switch(self, None) outputs the list of switches.
         self.topo_raw_switches = copy.copy(get_switch(self, None))
-        # The Function get_link(self, None) outputs the list of links.
-        self.topo_raw_links = copy.copy(get_link(self, None))
 
-        """
-        Now you have saved the links and switches of the topo. So you could do all sort of stuf with them. 
-        """
-
-        print(" \t" + "Current Links:")
-        for l in self.topo_raw_links:
-            print (" \t\t" + str(l))
+    """
+    Print saved topology data
+    """
+    def print_topo(self):
+        print(" \t" + "Current Hosts:")
+        for s in self.topo_raw_hosts:
+            print(" \t\t" + str(s))
 
         print(" \t" + "Current Switches:")
         for s in self.topo_raw_switches:
-            print (" \t\t" + str(s))
+            print(" \t\t" + str(s))
 
-    """
-    This event is fired when a switch leaves the topo. i.e. fails.
-    """
-    @set_ev_cls(event.EventSwitchLeave, [MAIN_DISPATCHER, CONFIG_DISPATCHER, DEAD_DISPATCHER])
-    def handler_switch_leave(self, ev):
-        self.logger.info("Not tracking Switches, switch leaved.")
+        print(" \t" + "Current Links:")
+        for l in self.topo_raw_links:
+            print(" \t\t" + str(l))
 
     # @set_ev_cls(event.EventSwitchEnter)
     # def get_topology_data(self, ev):
