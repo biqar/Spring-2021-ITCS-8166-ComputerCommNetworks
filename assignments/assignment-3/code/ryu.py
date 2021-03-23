@@ -148,9 +148,10 @@ class SimpleSwitch13(app_manager.RyuApp):
                                   in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
 
+        self.topo_raw_hosts = []
         self.topo_raw_hosts = copy.copy(get_host(self, None))
         self.count = self.count + 1
-        if self.count == self.MAX_COUNT:
+        if self.count%self.MAX_COUNT == 0:
             # x = []
             self.print_topo()
             # for h in self.topo_raw_hosts:
@@ -168,10 +169,12 @@ class SimpleSwitch13(app_manager.RyuApp):
     def measure_bandwidth(self):
         for s_host in self.topo_raw_hosts:
             s = s_host.port.dpid
+            # s = 1
             hs = 'h' + str(s)
+            # hs = 'h1' + str(s)
             hs_ip = '10.0.0.' + str(s)
             # s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf', '-s &> server.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-            s_result = subprocess.Popen(['/home/mininet/mininet/util/m', hs, 'iperf', '-s'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            # s_result = subprocess.call(['/home/mininet/mininet/util/m', hs, 'iperf', '-s'], shell=True)
             # server_log = str(s_result.communicate(input="mininet"))
             #s_result.rstrip()
             #print("iperf server log: {}".format(server_log))
@@ -182,15 +185,19 @@ class SimpleSwitch13(app_manager.RyuApp):
                     continue
                 hc = 'h' + str(c)
                 print("iperf --server on {} with ip {} and iperf --client in {}".format(hs, hs_ip, hc))
-                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-                # c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip], stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate()
-                client_log = str(c_result.communicate(input="mininet"))
+                # c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                # c_result = subprocess.call(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip])
+                client_log = str(c_result.communicate())
                 # client_log = str(c_result)
-                # c_result.rstrip()
-                print("iperf client log: {}".format(client_log))
-                self.bandwidth[(hc, hs)] = 9.0
-                break
-            break
+                # print("iperf client log: {}".format(client_log))
+                bw = client_log
+                bw = bw.split("Mbits/sec")[0]
+                bw = bw.rstrip().split(" ")[-1]
+                # print("bandwidth: {}".format(bw))
+                self.bandwidth[(hc, hs)] = float(bw)
+                # break
+            # break
 
 
     """
@@ -199,6 +206,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     @set_ev_cls(event.EventLinkAdd)
     def handler_link_add(self, ev):
         # The Function get_link(self, None) outputs the list of links.
+        # del self.topo_raw_links[:]
         self.topo_raw_links = copy.copy(get_link(self, None))
 
 
@@ -208,6 +216,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     @set_ev_cls(event.EventSwitchEnter)
     def handler_switch_enter(self, ev):
         # The Function get_switch(self, None) outputs the list of switches.
+        # del self.topo_raw_switches[:]
         self.topo_raw_switches = copy.copy(get_switch(self, None))
 
     """
