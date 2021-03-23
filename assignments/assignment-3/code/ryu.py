@@ -34,7 +34,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
         # USed for learning switch functioning
         self.mac_to_port = {}
-        self.delay = {}
+        self.bandwidth = {}
         # Holds the topology data and structure
         self.topo_raw_switches = []
         self.topo_raw_links = []
@@ -46,14 +46,6 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
-        msg = ev.msg
-        self.logger.info('OFPSwitchFeatures received: '
-                         '\n\tdatapath_id=0x%016x n_buffers=%d '
-                         '\n\tn_tables=%d auxiliary_id=%d '
-                         '\n\tcapabilities=0x%08x',
-                         msg.datapath_id, msg.n_buffers, msg.n_tables,
-                         msg.auxiliary_id, msg.capabilities)
-
         datapath = ev.msg.datapath
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -158,18 +150,28 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.topo_raw_hosts = copy.copy(get_host(self, None))
         self.count = self.count + 1
         if self.count%self.MAX_COUNT == 0:
-            x = []
+            # x = []
             self.print_topo()
-            for h in self.topo_raw_hosts:
-                for ip in h.ipv4:
-                    host = 'h' + ip.split('.')[3]
-                    x.append(host)
-            print(x)
-            print("***Delay Test***")
-            # todo: call delay_test
+            # for h in self.topo_raw_hosts:
+            #     for ip in h.ipv4:
+            #         host = 'h' + ip.split('.')[3]
+            #         x.append(host)
+            # print(x)
+            print("***Measuring Bandwidth***")
+            self.measure_bandwidth()
+
+    """
+    Measure the bandwidth between hosts by using iperf
+    """
+    def measure_bandwidth(self):
+        for link in self.topo_raw_links:
+            s, c, _ = link
+            hs = 'h' + str(s)
+            hc = '10.0.0.' + str(c)
+            print("iperf --server on {} and iperf --client in {}".format(hs, hc))
+        #process1 = subprocess.Popen(["iperf", "-c", 10.10.0.1], stdout=subprocess.PIPE)
 
 
-    ###################################################################################
     """
     The event EventLinkAdd will trigger the activation of handler_link_add().
     """
