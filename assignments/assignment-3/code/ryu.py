@@ -39,7 +39,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # Holds the topology data and structure
         self.topo_raw_switches = []
         self.topo_raw_links = []
-        self.topo_raw_hosts = []
+        self.topo_raw_hosts = set()
         # Count to print topology data after convergence
         self.MAX_COUNT = 300
         self.count = 0
@@ -148,8 +148,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                                   in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
 
-        self.topo_raw_hosts = []
-        self.topo_raw_hosts = copy.copy(get_host(self, None))
+        self.topo_raw_hosts.union(list(copy.copy(get_host(self, None))))
         self.count = self.count + 1
         if self.count%self.MAX_COUNT == 0:
             # x = []
