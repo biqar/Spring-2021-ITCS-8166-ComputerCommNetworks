@@ -41,7 +41,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.topo_raw_links = []
         self.topo_raw_hosts = set()
         # Count to print topology data after convergence
-        self.MAX_COUNT = 300
+        self.MAX_COUNT = 100
         self.count = 0
 
 
