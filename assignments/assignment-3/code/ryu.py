@@ -39,7 +39,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # Holds the topology data and structure
         self.topo_raw_switches = []
         self.topo_raw_links = []
-        self.topo_raw_hosts = set()
+        self.topo_raw_hosts = {}
         # Count to print topology data after convergence
         self.MAX_COUNT = 100
         self.count = 0
@@ -147,8 +147,11 @@ class SimpleSwitch13(app_manager.RyuApp):
         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                                   in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
+        # print(type(get_host(self, None)))
+        # self.topo_raw_hosts |= list(get_host(self, None))
+        for host in list(get_host(self, None)):
+            self.topo_raw_hosts[host.port.dpid] = host
 
-        self.topo_raw_hosts.union(list(copy.copy(get_host(self, None))))
         self.count = self.count + 1
         if self.count%self.MAX_COUNT == 0:
             # x = []
@@ -166,8 +169,8 @@ class SimpleSwitch13(app_manager.RyuApp):
     Measure the bandwidth between hosts by using iperf
     """
     def measure_bandwidth(self):
-        for s_host in self.topo_raw_hosts:
-            s = s_host.port.dpid
+        for s in self.topo_raw_hosts.keys():
+            # s = s_host.port.dpid
             # s = 1
             hs = 'h' + str(s)
             # hs = 'h1' + str(s)
@@ -177,19 +180,23 @@ class SimpleSwitch13(app_manager.RyuApp):
             # server_log = str(s_result.communicate(input="mininet"))
             #s_result.rstrip()
             #print("iperf server log: {}".format(server_log))
-            for c_host in self.topo_raw_hosts:
-                c = c_host.port.dpid
+            for c in self.topo_raw_hosts.keys():
+                # c = c_host.port.dpid
                 # condition to check whether client and server are the same host
                 if c == s:
                     continue
                 hc = 'h' + str(c)
                 print("iperf --server on {} with ip {} and iperf --client in {}".format(hs, hs_ip, hc))
                 # c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip, ' &> client.log &'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                c_result = subprocess.Popen(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
                 # c_result = subprocess.call(['/home/mininet/mininet/util/m', hc, 'iperf', '-t 5', '-c', hs_ip])
                 client_log = str(c_result.communicate())
                 # client_log = str(c_result)
                 # print("iperf client log: {}".format(client_log))
+                
+                if 'connect failed' in client_log:
+                    continue
+
                 bw = client_log
                 bw = bw.split("Mbits/sec")[0]
                 bw = bw.rstrip().split(" ")[-1]
@@ -223,7 +230,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     """
     def print_topo(self):
         print(" \t" + "Current Hosts:")
-        for h in self.topo_raw_hosts:
+        for h in self.topo_raw_hosts.values():
             print(" \t\t" + str(h))
 
         print(" \t" + "Current Switches:")
