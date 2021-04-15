@@ -27,6 +27,7 @@ from ryu.topology.api import get_switch, get_link, get_host
 
 import copy
 import subprocess
+import networkx as nx
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -44,6 +45,13 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.MAX_COUNT = 300
         # Count to print topology data after convergence
         self.count = 0
+        self.g = nx.DiGraph()
+        self.host_locate = {1: {'00:00:00:00:00:01'},
+                            2: {'00:00:00:00:00:02'},
+                            4: {'00:00:00:00:00:04'},
+                            5: {'00:00:00:00:00:05'},
+                            6: {'00:00:00:00:00:06'}
+                            }
         self.topo = {'1': {'2': 10, '3': 10, '5': 15},
                      '2': {'1': 10, '3': 15, '4': 15},
                      '3': {'1': 10, '2': 15, '4': 5},
@@ -117,10 +125,10 @@ class SimpleSwitch13(app_manager.RyuApp):
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocols(ethernet.ethernet)[0]
 
-        self.logger.info('  _packet_in_handler: src_mac -> %s' % eth.src)
-        self.logger.info('  _packet_in_handler: dst_mac -> %s' % eth.dst)
-        self.logger.info('  _packet_in_handler: %s' % pkt)
-        self.logger.info('  ------')
+        # self.logger.info('  _packet_in_handler: src_mac -> %s' % eth.src)
+        # self.logger.info('  _packet_in_handler: dst_mac -> %s' % eth.dst)
+        # self.logger.info('  _packet_in_handler: %s' % pkt)
+        # self.logger.info('  ------')
 
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
             # ignore lldp packet
@@ -129,9 +137,10 @@ class SimpleSwitch13(app_manager.RyuApp):
         src = eth.src
 
         dpid = datapath.id
+        dst_dpid = self.dpid_hostLookup(dst)
         self.mac_to_port.setdefault(dpid, {})
 
-        # self.logger.info("\tpacket in %s %s %s %s", dpid, src, dst, in_port)
+        self.logger.info("\tpacket in %s %s %s %s %s", dpid, src, dst, dst_dpid, in_port)
 
         # learn a mac address to avoid FLOOD next time.
         self.mac_to_port[dpid][src] = in_port
@@ -142,6 +151,11 @@ class SimpleSwitch13(app_manager.RyuApp):
             out_port = ofproto.OFPP_FLOOD
 
         actions = [parser.OFPActionOutput(out_port)]
+
+        self.print_topo();
+        # build graph
+
+        # run dijkstra to find path
 
         # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
@@ -164,6 +178,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         # self.topo_raw_hosts |= list(get_host(self, None))
         for host in list(get_host(self, None)):
             self.topo_raw_hosts[host.port.dpid] = host
+
+
+    def dpid_hostLookup(self, lmac):
+        for dpid, mac in self.host_locate.iteritems():
+            if lmac in mac:
+                return dpid
 
 
     """
