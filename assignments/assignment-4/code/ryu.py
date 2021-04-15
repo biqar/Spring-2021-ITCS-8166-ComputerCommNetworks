@@ -152,10 +152,11 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         actions = [parser.OFPActionOutput(out_port)]
 
-        self.print_topo();
+        # self.print_topo();
         # build graph
-
+        self.g.add_nodes_from([switch.dp.id for switch in self.topo_raw_switches])
         # run dijkstra to find path
+        path = self.dijkstra(dpid, dst_dpid);
 
         # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
@@ -179,7 +180,58 @@ class SimpleSwitch13(app_manager.RyuApp):
         for host in list(get_host(self, None)):
             self.topo_raw_hosts[host.port.dpid] = host
 
+    """
+    Calculate shortest path tree from the src
+    """
+    def dijkstra(self, src, dest, visited=[], dist={}, pred={}):
+        # sanity checks
+        if src not in self.topo:
+            raise TypeError('The root of the shortest path tree cannot be found')
+        if dest not in self.topo:
+            raise TypeError('The target of the shortest path cannot be found')
 
+        # base condition
+        if src == dest:
+            # build the shortest path
+            path = []
+            p = dest
+            while p is not None:
+                path.append(p)
+                p = pred.get(pred, None)
+            print('shortest path found: ' + str(path) + " with delay cost= " + str(dist[dest]))
+            return path
+
+        else:
+            # it will reach for the root-source vertex
+            # initializing the cost with 0
+            if not visited:
+                dist[src] = 0
+
+            # visit the neighbors
+            for neighbor in self.topo[src]:
+                if neighbor not in visited:
+                    new_distance = dist[src] + self.topo[src][neighbor]
+                    if new_distance < dist.get(neighbor, float('inf')):
+                        dist[neighbor] = new_distance
+                        pred[neighbor] = src
+
+            # mark the source as visited
+            visited.append(src)
+
+            # all neighbors distance have been updated
+            # now select the non-visited node with lowest distance
+            # and run Dijkstra sourcing from that lowest distance vertex
+            unvisited = {}
+            for k in self.topo:
+                if k not in visited:
+                    unvisited[k] = dist.get(k, float('inf'))
+            next = min(unvisited, key=unvisited.get)
+            return self.dijkstra(next, dest, visited, dist, pred)
+
+
+    """
+        Find dpid from mac address
+    """
     def dpid_hostLookup(self, lmac):
         for dpid, mac in self.host_locate.iteritems():
             if lmac in mac:
