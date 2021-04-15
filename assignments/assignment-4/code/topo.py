@@ -18,11 +18,11 @@ class MyTopo(Topo):
         Topo.__init__(self)
 
         # Add hosts and switches
-        h1 = [self.addHost('h1', ip='10.0.0.1')]
-        h2 = [self.addHost('h2', ip='10.0.0.2')]
-        h4 = [self.addHost('h4', ip='10.0.0.4')]
-        h5 = [self.addHost('h5', ip='10.0.0.5')]
-        h6 = [self.addHost('h6', ip='10.0.0.6')]
+        h1 = [self.addHost('h1', ip='10.0.0.1', mac='00:00:00:00:00:01')]
+        h2 = [self.addHost('h2', ip='10.0.0.2', mac='00:00:00:00:00:02')]
+        h4 = [self.addHost('h4', ip='10.0.0.4', mac='00:00:00:00:00:04')]
+        h5 = [self.addHost('h5', ip='10.0.0.5', mac='00:00:00:00:00:05')]
+        h6 = [self.addHost('h6', ip='10.0.0.6', mac='00:00:00:00:00:06')]
 
         s1 = [self.addSwitch('s1')]
         s2 = [self.addSwitch('s2')]
