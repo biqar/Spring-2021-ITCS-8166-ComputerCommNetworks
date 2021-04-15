@@ -156,7 +156,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         # build graph
         self.g.add_nodes_from([switch.dp.id for switch in self.topo_raw_switches])
         # run dijkstra to find path
-        path = self.dijkstra(dpid, dst_dpid);
+        if dpid in self.topo and dst_dpid in self.topo:
+            path = self.dijkstra(dpid, dst_dpid)
 
         # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
