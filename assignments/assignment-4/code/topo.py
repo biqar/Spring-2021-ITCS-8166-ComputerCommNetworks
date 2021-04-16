@@ -39,21 +39,21 @@ class MyTopo(Topo):
         self.addLink('s6', 'h6')
 
         # switch to switch links
-        self.addLink('s1', 's2', cls=TCLink, delay='10ms')
-        self.addLink('s1', 's3', cls=TCLink, delay='10ms')
-        self.addLink('s1', 's5', cls=TCLink, delay='15ms')
-        self.addLink('s2', 's3', cls=TCLink, delay='15ms')
-        self.addLink('s2', 's4', cls=TCLink, delay='15ms')
-        self.addLink('s3', 's4', cls=TCLink, delay='5ms')
-        self.addLink('s4', 's6', cls=TCLink, delay='10ms')
-        self.addLink('s5', 's6', cls=TCLink, delay='15ms')
+        self.addLink('s1', 's2', delay='10ms')
+        self.addLink('s1', 's3', delay='10ms')
+        self.addLink('s1', 's5', delay='15ms')
+        self.addLink('s2', 's3', delay='15ms')
+        self.addLink('s2', 's4', delay='15ms')
+        self.addLink('s3', 's4', delay='5ms')
+        self.addLink('s4', 's6', delay='10ms')
+        self.addLink('s5', 's6', delay='15ms')
 
 
 def customTopo():
     "Create a network with custom topology and remote-controller"
     c0 = RemoteController('c0', ip='127.0.0.1', port=6633)  # external controller
     topo = MyTopo()
-    net = Mininet(topo=topo, controller=c0)
+    net = Mininet(topo=topo, link=TCLink, controller=c0)
     info("***Starting Network***\n")
     net.start()
 
