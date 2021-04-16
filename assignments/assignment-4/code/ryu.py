@@ -200,7 +200,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             p = dest
             while p is not None:
                 path.append(p)
-                p = pred.get(pred, None)
+                p = pred.get(p, None)
             print('shortest path found: ' + str(path) + " with delay cost= " + str(dist[dest]))
             return path
 
