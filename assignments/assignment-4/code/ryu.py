@@ -215,7 +215,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         else:
             # it will reach for the root-source vertex
             # initializing the cost with 0
-            if not visited:
+            if len(visited) == 0:
                 dist[src] = 0
 
             # visit the neighbors
