@@ -163,6 +163,10 @@ class SimpleSwitch13(app_manager.RyuApp):
             path = self.dijkstra(str(src_dpid), str(dst_dpid))
 
         # todo: forward packets based on the Dijkstra's shortest path
+        # Resource:
+            # https://www.grotto-networking.com/SDNfun.html
+            # https://github.com/amitsk1994/mininet-RYU-ShortestPath
+            # https://sdn-lab.com/2014/12/25/shortest-path-forwarding-with-openflow-on-ryu/
 
         # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
