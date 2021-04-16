@@ -209,7 +209,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             # clear the local variables
             dist.clear()
             parent.clear()
-            visited.clear()
+            del visited[:]
             return path
 
         else:
