@@ -157,7 +157,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # build graph
         self.g.add_nodes_from([switch.dp.id for switch in self.topo_raw_switches])
         # run dijkstra to find path
-        if dpid in self.topo and dst_dpid in self.topo:
+        if str(dpid) in self.topo and str(dst_dpid) in self.topo:
             self.logger.info("calling to dijkstra with source %s destination %s", dpid, dst_dpid)
             path = self.dijkstra(dpid, dst_dpid)
 
