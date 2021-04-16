@@ -205,6 +205,11 @@ class SimpleSwitch13(app_manager.RyuApp):
                 path.append(p)
                 p = parent.get(p, None)
             print('shortest path found: ' + str(path) + " with delay cost= " + str(dist[dest]))
+
+            # clear the local variables
+            dist.clear()
+            parent.clear()
+            visited.clear()
             return path
 
         else:
