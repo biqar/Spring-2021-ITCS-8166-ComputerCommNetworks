@@ -159,7 +159,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # run dijkstra to find path
         if str(dpid) in self.topo and str(dst_dpid) in self.topo:
             self.logger.info("calling to dijkstra with source %s destination %s", dpid, dst_dpid)
-            path = self.dijkstra(dpid, dst_dpid)
+            path = self.dijkstra(str(dpid), str(dst_dpid))
 
         # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
