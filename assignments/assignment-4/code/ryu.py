@@ -137,11 +137,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         src = eth.src
 
         dpid = datapath.id
+        src_dpid = self.dpid_hostLookup(src)
         dst_dpid = self.dpid_hostLookup(dst)
         self.mac_to_port.setdefault(dpid, {})
 
         if dst_dpid is not None:
-            self.logger.info("\tpacket in %s %s %s %s %s", dpid, src, dst, dst_dpid, in_port)
+            self.logger.info("\n\tpacket in %s %s %s %s %s", dpid, src, dst, dst_dpid, in_port)
 
         # learn a mac address to avoid FLOOD next time.
         self.mac_to_port[dpid][src] = in_port
@@ -157,9 +158,11 @@ class SimpleSwitch13(app_manager.RyuApp):
         # build graph
         self.g.add_nodes_from([switch.dp.id for switch in self.topo_raw_switches])
         # run dijkstra to find path
-        if str(dpid) in self.topo and str(dst_dpid) in self.topo:
-            self.logger.info("calling to dijkstra with source %s destination %s", dpid, dst_dpid)
-            path = self.dijkstra(str(dpid), str(dst_dpid))
+        if str(src_dpid) in self.topo and str(dst_dpid) in self.topo:
+            self.logger.info("calling to dijkstra with source %s destination %s", src_dpid, dst_dpid)
+            path = self.dijkstra(str(src_dpid), str(dst_dpid))
+
+        # todo: forward packets based on the Dijkstra's shortest path
 
         # install a flow to avoid packet_in next time
         if out_port != ofproto.OFPP_FLOOD:
