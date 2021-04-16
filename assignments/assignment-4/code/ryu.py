@@ -228,8 +228,9 @@ class SimpleSwitch13(app_manager.RyuApp):
             for k in self.topo:
                 if k not in visited:
                     unvisited[k] = dist.get(k, float('inf'))
-            next = min(unvisited, key=unvisited.get)
-            return self.dijkstra(next, dest, visited, dist, pred)
+            if len(unvisited) > 0:
+                next_vertex = min(unvisited, key=unvisited.get)
+                return self.dijkstra(next_vertex, dest, visited, dist, pred)
 
 
     """
