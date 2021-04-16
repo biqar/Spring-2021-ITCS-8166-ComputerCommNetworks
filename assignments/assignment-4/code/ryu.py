@@ -189,7 +189,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     """
     Calculate shortest path tree from the src
     """
-    def dijkstra(self, src, dest, visited=[], dist={}, pred={}):
+    def dijkstra(self, src, dest, visited=[], dist={}, parent={}):
         # sanity checks
         if src not in self.topo:
             raise TypeError('The root of the shortest path tree cannot be found')
@@ -203,7 +203,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             p = dest
             while p is not None:
                 path.append(p)
-                p = pred.get(p, None)
+                p = parent.get(p, None)
             print('shortest path found: ' + str(path) + " with delay cost= " + str(dist[dest]))
             return path
 
@@ -219,7 +219,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     new_distance = dist[src] + self.topo[src][neighbor]
                     if new_distance < dist.get(neighbor, float('inf')):
                         dist[neighbor] = new_distance
-                        pred[neighbor] = src
+                        parent[neighbor] = src
 
             # mark the source as visited
             visited.append(src)
@@ -233,7 +233,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     unvisited[k] = dist.get(k, float('inf'))
             if len(unvisited) > 0:
                 next_vertex = min(unvisited, key=unvisited.get)
-                return self.dijkstra(next_vertex, dest, visited, dist, pred)
+                return self.dijkstra(next_vertex, dest, visited, dist, parent)
 
 
     """
