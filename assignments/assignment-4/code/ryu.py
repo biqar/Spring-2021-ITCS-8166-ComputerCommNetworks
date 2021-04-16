@@ -46,11 +46,11 @@ class SimpleSwitch13(app_manager.RyuApp):
         # Count to print topology data after convergence
         self.count = 0
         self.g = nx.DiGraph()
-        self.host_locate = {1: {'00:00:00:00:00:01'},
-                            2: {'00:00:00:00:00:02'},
-                            4: {'00:00:00:00:00:04'},
-                            5: {'00:00:00:00:00:05'},
-                            6: {'00:00:00:00:00:06'}
+        self.host_locate = {'1': {'00:00:00:00:00:01'},
+                            '2': {'00:00:00:00:00:02'},
+                            '4': {'00:00:00:00:00:04'},
+                            '5': {'00:00:00:00:00:05'},
+                            '6': {'00:00:00:00:00:06'}
                             }
         self.topo = {'1': {'2': 10, '3': 10, '5': 15},
                      '2': {'1': 10, '3': 15, '4': 15},
@@ -158,6 +158,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.g.add_nodes_from([switch.dp.id for switch in self.topo_raw_switches])
         # run dijkstra to find path
         if dpid in self.topo and dst_dpid in self.topo:
+            self.logger.info("calling to dijkstra with source %s destination %s", dpid, dst_dpid)
             path = self.dijkstra(dpid, dst_dpid)
 
         # install a flow to avoid packet_in next time
